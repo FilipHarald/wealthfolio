@@ -44,3 +44,23 @@ export const backupDatabase = async (): Promise<{ filename: string; data: Uint8A
     throw error;
   }
 };
+
+export interface DatabaseInfo {
+  database_path: string;
+  app_data_dir: string;
+  is_using_env_var: boolean;
+}
+
+export const getDatabaseInfo = async (): Promise<DatabaseInfo> => {
+  try {
+    switch (getRunEnv()) {
+      case RUN_ENV.DESKTOP:
+        return invokeTauri('get_database_info');
+      default:
+        throw new Error(`Unsupported environment for getting database info`);
+    }
+  } catch (error) {
+    logger.error('Error fetching database info.');
+    throw error;
+  }
+};

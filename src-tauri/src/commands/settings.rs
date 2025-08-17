@@ -3,7 +3,8 @@ use std::sync::Arc;
 use crate::context::ServiceContext;
 use crate::events::{emit_portfolio_trigger_recalculate, PortfolioRequestPayload};
 use log::debug;
-use tauri::{AppHandle, State};
+use serde::{Deserialize, Serialize};
+use tauri::{AppHandle, Manager, State};
 use wealthfolio_core::fx::fx_model::{ExchangeRate, NewExchangeRate};
 use wealthfolio_core::settings::{Settings, SettingsUpdate};
 
@@ -148,4 +149,39 @@ pub async fn delete_exchange_rate(
         emit_portfolio_trigger_recalculate(&handle, PortfolioRequestPayload::builder().build());
     });
     Ok(())
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct DatabaseInfo {
+    pub database_path: String,
+    pub app_data_dir: String,
+    pub is_using_env_var: bool,
+}
+
+#[tauri::command]
+pub async fn get_database_info(
+    handle: tauri::AppHandle,
+) -> Result<DatabaseInfo, String> {
+    debug!("Fetching database path information...");
+    
+    // Get the app data directory the same way as in main.rs
+    let app_data_dir = handle
+        .path()
+        .app_data_dir()
+        .map_err(|e| format!("Failed to get app data dir: {}", e))?
+        .to_str()
+        .ok_or("Failed to convert app data dir path to string")?
+        .to_string();
+    
+    // Use the same function that the app uses to get the database path
+    let database_path = wealthfolio_core::db::get_db_path(&app_data_dir);
+    
+    // Check if DATABASE_URL environment variable is set
+    let is_using_env_var = std::env::var("DATABASE_URL").is_ok();
+    
+    Ok(DatabaseInfo {
+        database_path,
+        app_data_dir,
+        is_using_env_var,
+    })
 }

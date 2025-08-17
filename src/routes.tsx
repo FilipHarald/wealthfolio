@@ -20,6 +20,7 @@ import ExportSettingsPage from './pages/settings/exports/exports-page';
 import ContributionLimitPage from './pages/settings/contribution-limits/contribution-limits-page';
 import PerformancePage from '@/pages/performance/performance-page';
 import MarketDataSettingsPage from './pages/settings/market-data-settings';
+import EnvironmentVariablesPage from './pages/settings/environment/environment-variables-page';
 
 export function AppRoutes() {
   useGlobalEventListener();
@@ -46,6 +47,7 @@ export function AppRoutes() {
             <Route path="exports" element={<ExportSettingsPage />} />
             <Route path="contribution-limits" element={<ContributionLimitPage />} />
             <Route path="market-data" element={<MarketDataSettingsPage />} />
+            <Route path="environment" element={<EnvironmentVariablesPage />} />
           </Route>
           <Route path="*" element={<h1>Not Found</h1>} />
         </Route>

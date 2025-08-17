@@ -107,6 +107,7 @@ pub fn main() {
             commands::settings::update_exchange_rate,
             commands::settings::add_exchange_rate,
             commands::settings::delete_exchange_rate,
+            commands::settings::get_database_info,
             commands::goal::create_goal,
             commands::goal::update_goal,
             commands::goal::delete_goal,
